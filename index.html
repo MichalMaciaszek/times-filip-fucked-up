@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Times Filip did something wrong, before going back to Toby</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-alt: #111827;
+      --card: #1f2933;
+      --card-alt: #2b3440;
+      --border-subtle: #374151;
+      --accent: #9ca3af;
+      --accent-soft: #4b5563;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --danger: #f87171;
+      --shadow-soft: 0 18px 45px rgba(0,0,0,0.45);
+      --radius-xl: 1.25rem;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 50%, #020617 100%);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 960px;
+      background: linear-gradient(135deg, rgba(31, 41, 55, 0.96), rgba(17, 24, 39, 0.98));
+      border-radius: 1.75rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: var(--shadow-soft);
+      padding: 2.25rem 2.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle corner blobs */
+    .shell::before,
+    .shell::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(40px);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .shell::before {
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(148, 163, 184, 0.3), transparent 60%);
+      top: -80px;
+      right: -90px;
+    }
+
+    .shell::after {
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(55, 65, 81, 0.45), transparent 65%);
+      bottom: -110px;
+      left: -90px;
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 1.8rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(156, 163, 175, 0.45);
+      background: radial-gradient(circle at top left, rgba(249, 250, 251, 0.12), rgba(15, 23, 42, 0.7));
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--danger);
+      box-shadow: 0 0 12px rgba(248, 113, 113, 0.7);
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 2.1vw + 1rem, 2.3rem);
+      line-height: 1.15;
+      letter-spacing: 0.01em;
+      margin-bottom: 0.4rem;
+    }
+
+    .subtitle {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      max-width: 32rem;
+    }
+
+    .layout {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+      gap: 1.8rem;
+      margin-top: 1.4rem;
+    }
+
+    @media (max-width: 780px) {
+      .shell {
+        padding: 1.8rem 1.4rem 1.6rem;
+        border-radius: 1.25rem;
+      }
+
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    /* Counter card */
+
+    .card {
+      background: radial-gradient(circle at top left, rgba(55, 65, 81, 0.45), rgba(15, 23, 42, 0.95));
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      padding: 1.25rem 1.35rem 1.4rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      gap: 0.75rem;
+    }
+
+    .card-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .counter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(55, 65, 81, 0.85);
+      font-size: 0.78rem;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .counter-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--danger);
+    }
+
+    .counter-value {
+      font-weight: 600;
+      color: #f9fafb;
+    }
+
+    .x-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.7rem;
+    }
+
+    @media (max-width: 520px) {
+      .x-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+    }
+
+    .slot {
+      position: relative;
+      border-radius: 0.9rem;
+      border: 1px dashed rgba(75, 85, 99, 0.85);
+      aspect-ratio: 1 / 0.8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, rgba(31, 41, 55, 0.65), rgba(15, 23, 42, 0.9));
+      color: var(--accent-soft);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      overflow: hidden;
+    }
+
+    .slot::before {
+      content: "empty";
+      opacity: 0.65;
+    }
+
+    .slot.filled {
+      border-style: solid;
+      border-color: rgba(156, 163, 175, 0.9);
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0.95));
+      box-shadow: inset 0 0 0 1px rgba(31, 41, 55, 0.9), 0 10px 25px rgba(0, 0, 0, 0.7);
+      color: var(--danger);
+    }
+
+    .slot.filled::before {
+      content: "✖";
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      opacity: 1;
+      transform: translateY(1px);
+    }
+
+    /* tooltip with reason */
+    .slot.filled::after {
+      content: attr(data-reason);
+      position: absolute;
+      bottom: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: 0.6rem;
+      padding: 0.45rem 0.6rem;
+      font-size: 0.74rem;
+      max-width: 210px;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      color: var(--text-main);
+      white-space: normal;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.16s ease-out, transform 0.16s ease-out;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
+      z-index: 10;
+    }
+
+    .slot.filled:hover::after {
+      opacity: 1;
+      transform: translate(-50%, -3px);
+    }
+
+    .slot-caption {
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .slot-caption span {
+      color: var(--danger);
+      font-size: 0.85rem;
+    }
+
+    /* Form + list */
+
+    .form-card {
+      background: linear-gradient(145deg, rgba(17, 24, 39, 0.96), rgba(15, 23, 42, 0.95));
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      padding: 1.25rem 1.35rem 1.4rem;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 0.65rem;
+      align-items: stretch;
+    }
+
+    @media (max-width: 620px) {
+      .form-row {
+        flex-direction: column;
+      }
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .input-wrap {
+      flex: 1;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      border-radius: 0.9rem;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      background: radial-gradient(circle at top left, rgba(31, 41, 55, 0.8), rgba(15, 23, 42, 0.9));
+      color: var(--text-main);
+      padding: 0.7rem 0.9rem;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.16s, box-shadow 0.16s, background 0.16s;
+    }
+
+    input[type="text"]::placeholder {
+      color: rgba(148, 163, 184, 0.8);
+    }
+
+    input[type="text"]:focus {
+      border-color: rgba(248, 113, 113, 0.9);
+      box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.7);
+      background: radial-gradient(circle at top left, rgba(31, 41, 55, 0.98), rgba(15, 23, 42, 1));
+    }
+
+    button {
+      border: none;
+      border-radius: 0.9rem;
+      padding: 0.7rem 1.1rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      background: linear-gradient(135deg, #f97373, #f97316);
+      color: #0b1120;
+      box-shadow: 0 14px 30px rgba(248, 113, 113, 0.45);
+      white-space: nowrap;
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, filter 0.12s ease-out;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 42px rgba(248, 113, 113, 0.6);
+      filter: brightness(1.05);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 10px 24px rgba(248, 113, 113, 0.55);
+      filter: brightness(0.98);
+    }
+
+    .hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .hint strong {
+      color: #e5e7eb;
+      font-weight: 500;
+    }
+
+    .list-wrap {
+      margin-top: 0.4rem;
+      max-height: 230px;
+      overflow: auto;
+      padding-right: 0.1rem;
+    }
+
+    ul#reasonList {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    li.reason-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.6rem;
+      align-items: baseline;
+      padding: 0.5rem 0.55rem;
+      border-radius: 0.9rem;
+      background: linear-gradient(120deg, rgba(15, 23, 42, 0.2), rgba(15, 23, 42, 0.85));
+      border: 1px solid rgba(55, 65, 81, 0.9);
+    }
+
+    .badge {
+      border-radius: 999px;
+      min-width: 1.7rem;
+      text-align: center;
+      font-size: 0.75rem;
+      padding: 0.08rem 0.35rem;
+      background: rgba(31, 41, 55, 0.96);
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      color: var(--accent);
+    }
+
+    .reason-main {
+      display: flex;
+      flex-direction: column;
+      gap: 0.08rem;
+      min-width: 0;
+    }
+
+    .reason-text {
+      font-size: 0.87rem;
+      word-wrap: break-word;
+      color: #f9fafb;
+    }
+
+    .time {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 0.35rem 0;
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        Audit log · Filip edition
+      </div>
+      <h1>Times Filip did something wrong, before going back to Toby</h1>
+      <p class="subtitle">
+        Each confession adds a fresh <strong>✖</strong> to the board. Ten strikes,
+        and maybe it’s time for flowers.
+      </p>
+    </header>
+
+    <section class="layout">
+      <!-- Left: X counter -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">Penalty board</div>
+          <div class="counter-pill">
+            <span class="counter-dot"></span>
+            <span><span class="counter-value" id="counter">0</span> / 10 strikes</span>
+          </div>
+        </div>
+
+        <div class="x-grid" id="xGrid">
+          <!-- 10 slots -->
+          <div class="slot" data-index="0"></div>
+          <div class="slot" data-index="1"></div>
+          <div class="slot" data-index="2"></div>
+          <div class="slot" data-index="3"></div>
+          <div class="slot" data-index="4"></div>
+          <div class="slot" data-index="5"></div>
+          <div class="slot" data-index="6"></div>
+          <div class="slot" data-index="7"></div>
+          <div class="slot" data-index="8"></div>
+          <div class="slot" data-index="9"></div>
+        </div>
+
+        <div class="slot-caption">
+          <span>•</span> Hover an <strong>✖</strong> to see what Filip did this time.
+        </div>
+      </section>
+
+      <!-- Right: form + list -->
+      <section class="form-card">
+        <form id="reasonForm" autocomplete="off">
+          <div class="form-row">
+            <div class="input-wrap">
+              <label for="reasonInput">Add a new offence</label>
+              <input
+                id="reasonInput"
+                type="text"
+                maxlength="200"
+                placeholder="Example: Forgot our anniversary. Again."
+              />
+            </div>
+            <div>
+              <label>&nbsp;</label>
+              <button type="submit">Add X</button>
+            </div>
+          </div>
+          <p class="hint">
+            Every time you submit, the next box turns into an <strong>✖</strong> and
+            the reason is saved below.
+            Max 10. Filip doesn’t get infinite tries.
+          </p>
+        </form>
+
+        <div class="list-wrap">
+          <ul id="reasonList">
+            <li class="empty-state">No offences logged yet. Filip is, suspiciously, perfect.</li>
+          </ul>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const form = document.getElementById("reasonForm");
+      const input = document.getElementById("reasonInput");
+      const counter = document.getElementById("counter");
+      const list = document.getElementById("reasonList");
+      const slots = Array.from(document.querySelectorAll(".slot"));
+
+      let entries = [];
+
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function render() {
+        // update slots
+        slots.forEach((slot, index) => {
+          if (index < entries.length) {
+            slot.classList.add("filled");
+            slot.setAttribute("data-reason", entries[index].reason);
+          } else {
+            slot.classList.remove("filled");
+            slot.removeAttribute("data-reason");
+          }
+        });
+
+        // update counter
+        counter.textContent = String(entries.length);
+
+        // update list
+        list.innerHTML = "";
+
+        if (!entries.length) {
+          const li = document.createElement("li");
+          li.className = "empty-state";
+          li.textContent = "No offences logged yet. Filip is, suspiciously, perfect.";
+          list.appendChild(li);
+          return;
+        }
+
+        entries.forEach((entry, idx) => {
+          const li = document.createElement("li");
+          li.className = "reason-item";
+
+          const badge = document.createElement("span");
+          badge.className = "badge";
+          badge.textContent = "#" + (idx + 1);
+
+          const main = document.createElement("div");
+          main.className = "reason-main";
+
+          const text = document.createElement("div");
+          text.className = "reason-text";
+          text.innerHTML = escapeHtml(entry.reason);
+
+          const time = document.createElement("div");
+          time.className = "time";
+          time.textContent = entry.time;
+
+          main.appendChild(text);
+          main.appendChild(time);
+
+          li.appendChild(badge);
+          li.appendChild(main);
+
+          list.appendChild(li);
+        });
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const value = input.value.trim();
+
+        if (!value) {
+          input.focus();
+          return;
+        }
+
+        if (entries.length >= 10) {
+          alert("You already have 10 Xs. Time to reset the board (or forgive Filip).");
+          return;
+        }
+
+        entries.push({
+          reason: value,
+          time: new Date().toLocaleString()
+        });
+
+        input.value = "";
+        input.focus();
+        render();
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
