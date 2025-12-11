@@ -594,6 +594,23 @@
         });
       }
 
+      async function loadInitialData() {
+        try {
+          const res = await fetch("data.json", { cache: "no-cache" });
+          if (!res.ok) {
+            render();
+            return;
+          }
+          const data = await res.json();
+          if (data && Array.isArray(data.entries)) {
+            entries = data.entries.slice(0, 10);
+          }
+        } catch (e) {
+          console.warn("Could not load data.json", e);
+        }
+        render();
+      }
+
       form.addEventListener("submit", function (e) {
         e.preventDefault();
         const value = input.value.trim();
@@ -618,7 +635,8 @@
         render();
       });
 
-      render();
+      // Initial load from data.json
+      loadInitialData();
     })();
   </script>
 </body>
